@@ -27,6 +27,7 @@ const modalSlice = createSlice({
     initialState,
     reducers: {
         setModalData: (
+            // 모달을 띄우는 액션
             state,
             { payload }: PayloadAction<TSetModalDataAction>
         ) => {

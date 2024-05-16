@@ -90,5 +90,5 @@ const boardsSlice = createSlice({
     },
 });
 
-export const { addBoard, deleteList } = boardsSlice.actions;
+export const { addBoard, deleteList, setModalActive } = boardsSlice.actions;
 export const boardsReducer = boardsSlice.reducer;

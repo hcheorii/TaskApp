@@ -27,14 +27,15 @@ const SideForm: FC<TSideFormProps> = ({ setIsFormOpen }) => {
             dispatch(
                 addBoard({
                     board: {
-                        boardId: uuidv4(),
-                        boardName: inputText,
-                        lists: [],
+                        boardId: uuidv4(), //boardId는 유일해야하므로 uuid를 사용
+                        boardName: inputText, //내가 input에 입력한 내용
+                        lists: [], //게시판에 있는 task에 대한 리스트
                     },
                 })
             );
             dispatch(
                 addLog({
+                    //게시판 등록에 대한 로그를 추가하는 액션
                     logId: uuidv4(),
                     logMessage: `게시판 등록 : ${inputText}`,
                     logAuthor: "User",
