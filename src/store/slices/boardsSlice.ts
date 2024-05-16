@@ -1,9 +1,18 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { IBoard } from "../../types";
 
 type TBoardsState = {
     modalActive: boolean;
     boardArray: IBoard[];
+};
+
+type TAddBoardAction = {
+    board: IBoard;
+};
+
+type TDeleteListAction = {
+    boardId: string;
+    listId: string;
 };
 
 const initialState: TBoardsState = {
@@ -51,7 +60,35 @@ const initialState: TBoardsState = {
 const boardsSlice = createSlice({
     name: "boards",
     initialState,
-    reducers: {},
+    reducers: {
+        //여기서 state는 이전 값이다.
+        //여기서 "payload"는 액션 객체 안에 있는 중요한 데이터를 가리킵니다.
+        //이 데이터는 액션이 어떤 변화를 일으켜야 하는지에 대한 정보를 제공합니다.
+        //예를 들어, 사용자가 로그인하는 경우, 액션의 유형은 "LOGIN"일 수 있고,
+        //페이로드에는 사용자의 정보 (예: 사용자 이름, 이메일 등)가 포함될 수 있습니다.
+
+        addBoard: (state, { payload }: PayloadAction<TAddBoardAction>) => {
+            state.boardArray.push(payload.board);
+            //push는 불변성을 지키지 않는 메소드지만 내부에 immer라는 라이브러리가
+            //이미 내장되어 있어서 상관안해도 된다.
+        },
+        deleteList: (state, { payload }: PayloadAction<TDeleteListAction>) => {
+            state.boardArray = state.boardArray.map((board) =>
+                board.boardId === payload.boardId
+                    ? {
+                          ...board,
+                          lists: board.lists.filter(
+                              (list) => list.listId !== payload.listId
+                          ),
+                      }
+                    : board
+            );
+        },
+        setModalActive: (state, { payload }: PayloadAction<boolean>) => {
+            state.modalActive = payload;
+        },
+    },
 });
 
+export const { addBoard, deleteList } = boardsSlice.actions;
 export const boardsReducer = boardsSlice.reducer;
