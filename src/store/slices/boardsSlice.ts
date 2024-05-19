@@ -32,6 +32,10 @@ type TDeleteTaskAction = {
     taskId: string;
 };
 
+type TDeleteBoardAction = {
+    boardId: string;
+};
+
 const initialState: TBoardsState = {
     modalActive: false,
     boardArray: [
@@ -154,14 +158,15 @@ const boardsSlice = createSlice({
         deleteTask: (state, { payload }: PayloadAction<TDeleteTaskAction>) => {
             //일 삭제하기에 대한 리듀서
             state.boardArray = state.boardArray.map((board) =>
-                board.boardId === payload.boardId
+                board.boardId === payload.boardId //게시판이 일치하는지 확인
                     ? {
                           ...board,
                           lists: board.lists.map((list) =>
-                              list.listId === payload.listId
+                              list.listId === payload.listId //리스트도 일치하는지 확인
                                   ? {
                                         ...list,
                                         tasks: list.tasks.filter(
+                                            //리스트 까지 일치하면 taskId가 같은 요소 삭제
                                             (task) =>
                                                 task.taskId !== payload.taskId
                                         ),
@@ -170,6 +175,15 @@ const boardsSlice = createSlice({
                           ),
                       }
                     : board
+            );
+        },
+
+        deleteBoard: (
+            state,
+            { payload }: PayloadAction<TDeleteBoardAction>
+        ) => {
+            state.boardArray = state.boardArray.filter(
+                (board) => board.boardId !== payload.boardId
             );
         },
     },
@@ -183,5 +197,6 @@ export const {
     addTask,
     deleteTask,
     updateTask,
+    deleteBoard,
 } = boardsSlice.actions;
 export const boardsReducer = boardsSlice.reducer;
