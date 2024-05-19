@@ -26,6 +26,12 @@ type TAddTaskAction = {
     task: ITask;
 };
 
+type TDeleteTaskAction = {
+    boardId: string;
+    listId: string;
+    taskId: string;
+};
+
 const initialState: TBoardsState = {
     modalActive: false,
     boardArray: [
@@ -122,9 +128,60 @@ const boardsSlice = createSlice({
                     : board
             );
         },
+        updateTask: (state, { payload }: PayloadAction<TAddTaskAction>) => {
+            //일 수정하기에 대한 리듀서
+            state.boardArray = state.boardArray.map((board) =>
+                board.boardId === payload.boardId
+                    ? {
+                          ...board,
+                          lists: board.lists.map((list) =>
+                              list.listId === payload.listId
+                                  ? {
+                                        ...list,
+                                        tasks: list.tasks.map((task) =>
+                                            task.taskId === payload.task.taskId
+                                                ? payload.task
+                                                : task
+                                        ),
+                                    }
+                                  : list
+                          ),
+                      }
+                    : board
+            );
+        },
+
+        deleteTask: (state, { payload }: PayloadAction<TDeleteTaskAction>) => {
+            //일 삭제하기에 대한 리듀서
+            state.boardArray = state.boardArray.map((board) =>
+                board.boardId === payload.boardId
+                    ? {
+                          ...board,
+                          lists: board.lists.map((list) =>
+                              list.listId === payload.listId
+                                  ? {
+                                        ...list,
+                                        tasks: list.tasks.filter(
+                                            (task) =>
+                                                task.taskId !== payload.taskId
+                                        ),
+                                    }
+                                  : list
+                          ),
+                      }
+                    : board
+            );
+        },
     },
 });
 
-export const { addBoard, deleteList, setModalActive, addList, addTask } =
-    boardsSlice.actions;
+export const {
+    addBoard,
+    deleteList,
+    setModalActive,
+    addList,
+    addTask,
+    deleteTask,
+    updateTask,
+} = boardsSlice.actions;
 export const boardsReducer = boardsSlice.reducer;

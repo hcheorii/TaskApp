@@ -6,7 +6,9 @@ import { useTypedDispatch } from "../../../hooks/redux";
 import { addBoard } from "../../../store/slices/boardsSlice";
 import { v4 as uuidv4 } from "uuid";
 import { addLog } from "../../../store/slices/loggerSlice";
+
 type TSideFormProps = {
+    //받아오는 프롭스의 타입 정의
     setIsFormOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
@@ -55,6 +57,7 @@ const SideForm: FC<TSideFormProps> = ({ setIsFormOpen }) => {
                 onChange={handleChange}
                 onBlur={handleOnBlur} //이 속성은 엘리먼트에서 포커스가 사라졌을 때 호출된다.
             />
+            {/* 새 게시판 추가하는 체크 표시 아이콘 */}
             <FiCheck className={icon} onMouseDown={handleClick} />
         </div>
     );

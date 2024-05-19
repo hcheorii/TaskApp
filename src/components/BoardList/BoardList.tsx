@@ -20,7 +20,7 @@ type TBoardListProps = {
 };
 
 const BoardList: FC<TBoardListProps> = ({
-    activeBoardId,
+    activeBoardId, //현재 들어와 있는 게시판의 id
     setActiveBoardId,
 }) => {
     const { boardArray } = useTypedSelector((state) => state.boards);
@@ -31,6 +31,7 @@ const BoardList: FC<TBoardListProps> = ({
     return (
         <div className={container}>
             <div className={title}>게시판 :</div>
+            {/* 모든 게시판을 나열 */}
             {boardArray.map(
                 (
                     board,
@@ -38,16 +39,17 @@ const BoardList: FC<TBoardListProps> = ({
                 ) => (
                     <div
                         key={board.boardId}
+                        //clsx는 조건에 따라 클래스 이름을 달리할 때 필요하다.
                         className={clsx(
                             {
-                                //아래 조건에 맞는다면 이 클래스이름을 사용
+                                //아래 조건에 맞는다면 []안에 있는 이 클래스이름을 사용
                                 [boardItemActive]:
                                     boardArray.findIndex(
                                         (b) => b.boardId === activeBoardId
                                     ) === index,
                             },
                             {
-                                //아래 조건에 맞는다면 이 클래스이름을 사용
+                                //아래 조건에 맞는다면 []안에 있는 이 클래스이름을 사용
                                 [boardItem]:
                                     boardArray.findIndex(
                                         (b) => b.boardId === activeBoardId
@@ -66,6 +68,7 @@ const BoardList: FC<TBoardListProps> = ({
                 {isFormOpen ? (
                     <SideForm setIsFormOpen={setIsFormOpen} />
                 ) : (
+                    //+모양 버튼
                     <FiPlusCircle className={addButton} onClick={handleClick} />
                 )}
             </div>
