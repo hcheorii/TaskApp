@@ -17,7 +17,7 @@ jobs:
                   npm run build
               env:
                   CI: true
-              working-directory: ./path/to/your/app # 앱의 디렉토리 경로로 수정해주세요
+              working-directory: ./ # 앱의 디렉토리 경로로 수정해주세요
 
             - name: Deploy to Firebase Hosting
               uses: FirebaseExtended/action-hosting-deploy@v0
