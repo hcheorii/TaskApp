@@ -12,6 +12,7 @@ type TSideFormProps = {
     setIsFormOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+
 const SideForm: FC<TSideFormProps> = ({ setIsFormOpen }) => {
     const [inputText, setInputText] = useState(""); //새 게시물 입력창에 대한 state
     const dispatch = useTypedDispatch();

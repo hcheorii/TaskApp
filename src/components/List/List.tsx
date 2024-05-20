@@ -10,6 +10,7 @@ import { v4 } from "uuid";
 import { setModalData } from "../../store/slices/modalSlice";
 import { setModalActive } from "../../store/slices/boardsSlice";
 import { deleteButton, header, listWrapper, name } from "./List.css";
+import { Droppable } from "react-beautiful-dnd";
 
 type TListProps = {
     //props에 대한 타입 명시
@@ -41,33 +42,44 @@ const List: FC<TListProps> = ({ list, boardId }) => {
     };
 
     return (
-        <div className={listWrapper}>
-            <div className={header}>
-                <div className={name}>{list.listName}</div>
-                <GrSubtract
-                    className={deleteButton}
-                    onClick={() => handleListDelete(list.listId)}
-                />
-                {/* - 눌렀을 떄 리스트 삭제 */}
-            </div>
-            {/* 리스트안에 있는 task들을 map함수로 하나하나 출력한다. */}
-            {list.tasks.map((task, index) => (
+        <Droppable droppableId={list.listId}>
+            {(provided) => (
                 <div
-                    key={task.taskId}
-                    onClick={() => handleTaskChange(boardId, list.listId, task)}
-                    //모달 띄우기
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    className={listWrapper}
                 >
-                    <Task
-                        taskName={task.taskName}
-                        taskDescription={task.taskDescription}
-                        id={task.taskId}
-                        boardId={boardId}
-                        index={index}
-                    />
+                    <div className={header}>
+                        <div className={name}>{list.listName}</div>
+                        <GrSubtract
+                            className={deleteButton}
+                            onClick={() => handleListDelete(list.listId)}
+                        />
+                        {/* - 눌렀을 떄 리스트 삭제 */}
+                    </div>
+                    {/* 리스트안에 있는 task들을 map함수로 하나하나 출력한다. */}
+                    {list.tasks.map((task, index) => (
+                        <div
+                            key={task.taskId}
+                            onClick={() =>
+                                handleTaskChange(boardId, list.listId, task)
+                            }
+                            //모달 띄우기
+                        >
+                            <Task
+                                taskName={task.taskName}
+                                taskDescription={task.taskDescription}
+                                id={task.taskId}
+                                boardId={boardId}
+                                index={index}
+                            />
+                        </div>
+                    ))}
+                    {provided.placeholder}
+                    <ActionButton boardId={boardId} listId={list.listId} />
                 </div>
-            ))}
-            <ActionButton boardId={boardId} listId={list.listId} />
-        </div>
+            )}
+        </Droppable>
     );
 };
 

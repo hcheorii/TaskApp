@@ -11,9 +11,10 @@ import ListsContainer from "./components/ListsContainer/ListsContainer";
 import { useTypedDispatch, useTypedSelector } from "./hooks/redux";
 import EditModal from "./components/EditModal/EditModal";
 import LoggerModal from "./components/LoggerModal/LoggerModal";
-import { deleteBoard } from "./store/slices/boardsSlice";
+import { deleteBoard, sort } from "./store/slices/boardsSlice";
 import { addLog } from "./store/slices/loggerSlice";
 import { v4 } from "uuid";
+import { DragDropContext } from "react-beautiful-dnd";
 
 function App() {
     const dispatch = useTypedDispatch();
@@ -52,6 +53,45 @@ function App() {
             alert(`최소 게시판 개수는 한 개입니다.`);
         }
     };
+
+    const handleDragEnd = (result: any) => {
+        const { destination, source, draggableId } = result;
+        console.log("lists", lists);
+        const sourceList = lists.filter(
+            //내가 움직인 Task가 속해있는 list
+            (list) => list.listId === source.droppableId
+        )[0];
+        console.log(sourceList);
+        dispatch(
+            sort({
+                boardIndex: boards.findIndex(
+                    (board) => board.boardId === activeBoardId
+                ),
+                droppableIdStart: source.droppableId, //출발하는 곳의 Id
+                droppableIdEnd: destination.droppableId, //도착하는 곳의 Id
+                droppableIndexStart: source.index, //출발하는 곳의 인덱스
+                droppableIndexEnd: destination.index, //도착하는 곳의 인덱스
+                draggableId, //Task의 id
+            })
+        );
+        dispatch(
+            addLog({
+                logId: v4(),
+                logMessage: `리스트 "${source.listName}에서 리스트 "${
+                    lists.filter(
+                        (list) => list.listId === destination.draggableId
+                    )[0].listName
+                }으로 ${
+                    sourceList.tasks.filter(
+                        (task) => task.taskId === draggableId
+                    )[0].taskName
+                }을 옮김.`,
+                logAuthor: "User",
+                logTimestamp: String(Date.now()),
+            })
+        );
+    };
+
     return (
         <div className={appContainer}>
             {isLoggerOpen ? (
@@ -63,10 +103,12 @@ function App() {
                 setActiveBoardId={setActiveBoardId}
             />
             <div className={board}>
-                <ListsContainer
-                    lists={lists}
-                    boardId={getActiveBoard.boardId}
-                />
+                <DragDropContext onDragEnd={handleDragEnd}>
+                    <ListsContainer
+                        lists={lists}
+                        boardId={getActiveBoard.boardId}
+                    />
+                </DragDropContext>
             </div>
             <div className={buttons}>
                 <button
